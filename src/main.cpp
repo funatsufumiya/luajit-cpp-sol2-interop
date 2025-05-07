@@ -4,15 +4,6 @@
 #include <sol/sol.hpp>
 #include "example.h"
 
-std::string readFile(const std::string& path) {
-    std::ifstream file(path);
-    if (!file) {
-        throw std::runtime_error("Cannot open file: " + path);
-    }
-    return std::string(std::istreambuf_iterator<char>(file), 
-                      std::istreambuf_iterator<char>());
-}
-
 int main() {
     sol::state lua;
     lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math, sol::lib::string);
@@ -25,14 +16,7 @@ int main() {
         "greet", &Calculator::greet
     );
     
-    try {
-        std::string luaCode = readFile("scripts/test.lua");
-        lua.script(luaCode);
-    } catch (const sol::error& e) {
-        std::cerr << "Error executing Lua script: " << e.what() << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
+    lua.script_file("scripts/test.lua");
     
     return 0;
 }
